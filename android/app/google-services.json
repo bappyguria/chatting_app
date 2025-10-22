@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "928114707036",
+    "project_id": "demoapp-dbee1",
+    "storage_bucket": "demoapp-dbee1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928114707036:android:3d7f77260cf8020609f499",
+        "android_client_info": {
+          "package_name": "com.example.chatting_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzRlgiPY4_LTX3BiaxO8TBfuFveDox7kA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
