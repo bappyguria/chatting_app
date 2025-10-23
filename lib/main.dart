@@ -1,4 +1,4 @@
-import 'package:chatting_app/screens/home_screen.dart';
+import 'package:chatting_app/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: 'Chat App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomeScreen(),
+      home: const OJANTA_SplashScreen(),
     );
   }
 }
