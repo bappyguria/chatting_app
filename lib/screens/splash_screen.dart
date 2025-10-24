@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:chatting_app/screens/login_screen.dart';
+import 'package:chatting_app/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class OJANTA_SplashScreen extends StatefulWidget {
