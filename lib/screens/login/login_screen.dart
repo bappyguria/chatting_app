@@ -1,9 +1,7 @@
 import 'package:chatting_app/screens/login/bloc/login_state.dart';
-import 'package:chatting_app/screens/home/main_bottom_nav_bar.dart';
 import 'package:chatting_app/screens/sign_up/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'bloc/login_bloc.dart';
 import 'bloc/login_event.dart';
 
@@ -18,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final box = Hive.box('myBox');
 
   @override
   void initState() {
@@ -116,8 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
                                     );
                                   }
-                                  box.put('email', emailController.text.trim());
-
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -170,7 +165,6 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state is LoginSuccess) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => MainBottomNavBar()),
             (e) => false,
           );
           ScaffoldMessenger.of(
