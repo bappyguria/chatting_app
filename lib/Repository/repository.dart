@@ -29,9 +29,15 @@ class Repository {
 
     if (snapshot.docs.isEmpty) return [];
 
-    print(snapshot.docs);
-
-    return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    return snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return {
+        'id': doc.id,
+        'name': data['name'] ?? '',
+        'email': data['email'] ?? '',
+      };
+    }).toList();
   }
+
 
 }

@@ -9,10 +9,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc(this.repository) : super(LoginInitial()) {
     on<LoginButtonPressed>((event, emit) async {
-      emit(LoddingLogin()); // লগইন শুরু
+      emit(LoddingLogin());
 
       try {
-        // Repository থেকে লগইন কল
         await repository.login(
           email: event.email,
           password: event.password,

@@ -1,3 +1,4 @@
+import 'package:chatting_app/screens/chat_screen.dart';
 import 'package:chatting_app/screens/user_list/user_list_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,12 +55,25 @@ class _UserListScreenState extends State<UserListScreen> {
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final user = state.users[index];
+                final userId = user['id'];
+
                 return Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            peerId: userId,
+                            peerName: user['name'],
+                          ),
+                        ),
+                      );
+                    },
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 10,
@@ -75,23 +89,20 @@ class _UserListScreenState extends State<UserListScreen> {
                       user['name'] ?? 'No Name',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(user['email'] ?? 'No Email'),
+                    subtitle: Column(
+                      children: [
+                        Text(user['email'] ?? 'No Email'),
+                        // Text(user['id'].toString())
+                      ],
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      // Future: navigate to user detail screen
-                    },
                   ),
                 );
               },
             );
           }
 
-          return const Center(
-            child: Text(
-              'Something went wrong!',
-              style: TextStyle(fontSize: 16, color: Colors.red),
-            ),
-          );
+          return SizedBox.shrink();
         },
       ),
     );

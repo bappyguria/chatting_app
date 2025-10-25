@@ -26,11 +26,13 @@ class UserListBloc extends Bloc<UserListEvent, UserListState> {
       emit(UsersLoadingState());
       try {
         final users = await repository.getUserList();
-        // emit(UsersLoadedState(users.map((user) => {
-        //   'name': user['name'],
-        //   'email': user['email'],
-        // }).toList()));
-        emit(UsersLoadedState(users));
+        final userList = users.map((user) => {
+          'id': user['id'],
+          'name': user['name'],
+          'email': user['email'],
+        }).toList();
+
+        emit(UsersLoadedState(userList));
       } catch (e) {
         emit(UsersErrorState(e.toString()));
       }
