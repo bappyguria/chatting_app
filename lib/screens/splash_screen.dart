@@ -1,9 +1,13 @@
 import 'dart:async';
-import 'package:chatting_app/screens/login_screen.dart';
+
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+
+import 'login/login_screen.dart';
+import 'home/main_bottom_nav_bar.dart';
 
 class OJANTA_SplashScreen extends StatefulWidget {
-  const OJANTA_SplashScreen({Key? key}) : super(key: key);
+  const OJANTA_SplashScreen({super.key});
 
   @override
   State<OJANTA_SplashScreen> createState() => _OJANTA_SplashScreenState();
@@ -13,13 +17,26 @@ class _OJANTA_SplashScreenState extends State<OJANTA_SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-      const Duration(seconds: 3),
-          () => Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      ),
-    );
+    _navigate();
+  }
+
+  void _navigate() async {
+    final box = Hive.box('myBox');
+
+    Timer(const Duration(seconds: 3), () {
+      final email = box.get('email', defaultValue: '');
+      if (email.isEmpty) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainBottomNavBar()),
+        );
+      }
+    });
   }
 
   @override
@@ -29,11 +46,8 @@ class _OJANTA_SplashScreenState extends State<OJANTA_SplashScreen> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // You can add your logo here
-            // Image.asset('assets/ojanta_logo.png', height: 150),
-            // const SizedBox(height: 20),
-            const Text(
+          children: const [
+            Text(
               'OJANTA',
               style: TextStyle(
                 fontSize: 40,
