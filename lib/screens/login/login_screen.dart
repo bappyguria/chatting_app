@@ -163,10 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       listener: (context, state) {
         if (state is LoginSuccess) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            (e) => false,
-          );
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> LoginScreen()), (result) => false,);
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));

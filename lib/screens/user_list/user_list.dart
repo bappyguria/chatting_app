@@ -28,9 +28,9 @@ class _UserListScreenState extends State<UserListScreen> {
       body: BlocConsumer<UserListBloc, UserListState>(
         listener: (context, state) {
           if (state is UsersErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -60,8 +60,10 @@ class _UserListScreenState extends State<UserListScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     leading: CircleAvatar(
                       backgroundColor: Colors.blueAccent,
                       child: Text(
