@@ -1,3 +1,4 @@
+import 'package:chatting_app/friend_request_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../profile_screen/profile_screen.dart';
@@ -18,7 +19,7 @@ class _MainBottomNavBarState extends State<MainBottomNavBar> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const HomeScreen(),
+     FriendRequestScreen(),
     const UserListScreen(),
     const ProfileScreen(),
   ];

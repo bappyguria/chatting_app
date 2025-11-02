@@ -1,4 +1,5 @@
 import 'package:chatting_app/screens/login/bloc/login_bloc.dart';
+import 'package:chatting_app/screens/profile_screen/bloc/profile_bloc.dart';
 import 'package:chatting_app/screens/sign_up/bloc/sign_up_bloc.dart';
 import 'package:chatting_app/screens/splash_screen.dart';
 import 'package:chatting_app/screens/user_list/user_list.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => LoginBloc(Repository())),
         BlocProvider(create: (_) => SignUpBloc(Repository())),
         BlocProvider(create: (_) => UserListBloc(Repository())),
+        BlocProvider(create: (_) => ProfileBloc(Repository())),
       ],
       child: MaterialApp(
         title: 'Chat App',

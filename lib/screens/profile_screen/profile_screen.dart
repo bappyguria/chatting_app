@@ -1,9 +1,6 @@
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:chatting_app/screens/profile_screen/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,119 +10,95 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final user = FirebaseAuth.instance.currentUser;
-  Map<String, dynamic>? userData;
-  bool isLoading = true;
-  File? _image;
-
   @override
   void initState() {
     super.initState();
-    fetchUserData();
-  }
-
-  Future<void> fetchUserData() async {
-    if (user == null) return;
-    DocumentSnapshot userDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user!.uid)
-        .get();
-
-    if (userDoc.exists) {
-      setState(() {
-        userData = userDoc.data() as Map<String, dynamic>;
-        isLoading = false;
-      });
-    } else {
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future<void> pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() {
-        _image = File(picked.path);
-      });
-      await uploadImageToFirebase();
-    }
-  }
-
-  Future<void> uploadImageToFirebase() async {
-    if (_image == null) return;
-
-    try {
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('profile_photos/${user!.uid}.jpg');
-
-      await storageRef.putFile(_image!);
-      final downloadUrl = await storageRef.getDownloadURL();
-
-      // Firestore এ ইউজার ডকুমেন্টে imageUrl আপডেট
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .update({'imageUrl': downloadUrl});
-
-      setState(() {
-        userData?['imageUrl'] = downloadUrl;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Profile photo updated successfully!")),
-      );
-    } catch (e) {
-      print("Upload error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error uploading image: $e")),
-      );
-    }
+    context.read<ProfileBloc>().add(GetProfileEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: const Text('My Profile'),
+        centerTitle: true,
         backgroundColor: Colors.deepPurple,
+        elevation: 0,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: pickImage,
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.deepPurple.shade100,
-                  backgroundImage: userData?['imageUrl'] != null
-                      ? NetworkImage(userData!['imageUrl'])
-                      : (_image != null ? FileImage(_image!) : null)
-                  as ImageProvider?,
-                  child: userData?['imageUrl'] == null && _image == null
-                      ? const Icon(Icons.camera_alt,
-                      size: 40, color: Colors.deepPurple)
-                      : null,
+
+      body: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          if (state is ProfileLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is ProfileLoaded) {
+            final user = state.userData;
+
+            return Column(
+              children: [
+                const SizedBox(height: 30),
+
+                // Profile Avatar Section
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.deepPurple.shade200,
+                  child: Text(
+                    user['name'][0].toUpperCase(),
+                    style: const TextStyle(fontSize: 40, color: Colors.white),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Text("Name: ${userData?['name'] ?? 'N/A'}",
-                  style: const TextStyle(fontSize: 18)),
-              Text("Email: ${userData?['email'] ?? 'N/A'}",
-                  style: const TextStyle(fontSize: 18)),
-              const SizedBox(height: 10),
-              Text("UID: ${user!.uid}", style: const TextStyle(fontSize: 14)),
-            ],
-          ),
-        ),
+
+                const SizedBox(height: 10),
+                Text(
+                  user['name'] ?? "Unknown",
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  user['email'] ?? "",
+                  style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+                ),
+
+                const SizedBox(height: 30),
+
+                // Card Details Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Column(
+                        children: [
+                          profileRow(Icons.person, 'Name', user['name']),
+                          const Divider(),
+                          profileRow(Icons.email, 'Email', user['email']),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            );
+          }
+
+          return const Center(child: Text("Failed to load profile", style: TextStyle(fontSize: 16)));
+        },
       ),
+    );
+  }
+
+  Widget profileRow(IconData icon, String title, String value) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.deepPurple),
+        const SizedBox(width: 10),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        const Spacer(),
+        Text(value, style: const TextStyle(fontSize: 15)),
+      ],
     );
   }
 }

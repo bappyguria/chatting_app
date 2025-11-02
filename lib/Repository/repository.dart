@@ -9,6 +9,24 @@ class Repository {
     await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
+  /// Get Current User Data
+  Future<Map<String, dynamic>?> currentUserData() async {
+    final user = _auth.currentUser;
+
+    if (user == null) return null;
+
+    DocumentSnapshot userDoc =
+    await fireStore.collection('users').doc(user!.uid).get();
+
+    if (userDoc.exists) {
+      print("User Data: ${userDoc.data()}");
+      return userDoc.data() as Map<String, dynamic>;
+    } else {
+      return null;
+    }
+  }
+
+
   /// Signs up a new user with the provided name, email, and password.
   Future<void> signUp({required String name,required String email, required String password}) async {
     UserCredential cred = await _auth.createUserWithEmailAndPassword(
@@ -18,9 +36,10 @@ class Repository {
     await fireStore.collection('users').doc(cred.user!.uid).set({
       'name': name,
       'email': email,
-      'password': password,
+      'uid': cred.user!.uid,
       'createdAt': FieldValue.serverTimestamp(),
     });
+
   }
 
   /// User List Stream
